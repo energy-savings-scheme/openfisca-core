@@ -1,6 +1,5 @@
 import pytest
 
-from openfisca_country_template import CountryTaxBenefitSystem
 from openfisca_country_template import entities, situation_examples
 
 from openfisca_core import periods, simulations, tools
@@ -25,11 +24,6 @@ class variable_with_calculate_output_divide(Variable):
     definition_period = periods.YEAR
     value_type = int
     calculate_output = simulations.calculate_output_divide
-
-
-@pytest.fixture(scope = "module")
-def tax_benefit_system():
-    return CountryTaxBenefitSystem()
 
 
 @pytest.fixture(scope = "module", autouse = True)

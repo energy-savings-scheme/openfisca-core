@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from typing import Iterable
 
 from enum import Enum
@@ -17,9 +15,6 @@ from openfisca_country_template.situation_examples import couple
 from openfisca_core.errors import SituationParsingError
 from openfisca_core.periods import ETERNITY
 from openfisca_core.indexed_enums import Enum as OFEnum
-
-
-from .test_countries import tax_benefit_system
 
 
 @fixture
@@ -69,7 +64,7 @@ def enum_variable():
     return TestEnum()
 
 
-def test_build_default_simulation(simulation_builder):
+def test_build_default_simulation(simulation_builder, tax_benefit_system):
     one_person_simulation = simulation_builder.build_default_simulation(tax_benefit_system, 1)
     assert one_person_simulation.persons.count == 1
     assert one_person_simulation.household.count == 1
@@ -83,7 +78,7 @@ def test_build_default_simulation(simulation_builder):
     assert (several_persons_simulation.household.members_role == Household.FIRST_PARENT).all()
 
 
-def test_explicit_singular_entities(simulation_builder):
+def test_explicit_singular_entities(simulation_builder, tax_benefit_system):
     assert simulation_builder.explicit_singular_entities(
         tax_benefit_system,
         {'persons': {'Javier': {}}, 'household': {'parents': ['Javier']}}
@@ -223,7 +218,7 @@ def test_canonicalize_period_keys(simulation_builder, persons):
     assert_near(population.get_holder('salary').get_array('2018-12'), [100])
 
 
-def test_finalize_group_entity(simulation_builder):
+def test_finalize_group_entity(simulation_builder, tax_benefit_system):
     simulation = Simulation(tax_benefit_system, tax_benefit_system.instantiate_entities())
     simulation_builder.add_group_entity('persons', ['Alicia', 'Javier', 'Sarah', 'Tom'], simulation.household.entity, {
         'Household_1': {'parents': ['Alicia', 'Javier']},
@@ -285,7 +280,7 @@ def test_allocate_person_twice(simulation_builder):
     assert exception.value.error == {'familles': {'famille1': {'parents': 'Alicia has been declared more than once in familles'}}}
 
 
-def test_one_person_without_household(simulation_builder):
+def test_one_person_without_household(simulation_builder, tax_benefit_system):
     simulation_dict = {'persons': {'Alicia': {}}}
     simulation = simulation_builder.build_from_dict(tax_benefit_system, simulation_dict)
     assert simulation.household.count == 1
@@ -293,7 +288,7 @@ def test_one_person_without_household(simulation_builder):
     assert parents_in_households.tolist() == [1]  # household member default role is first_parent
 
 
-def test_some_person_without_household(simulation_builder):
+def test_some_person_without_household(simulation_builder, tax_benefit_system):
     input_yaml = """
         persons: {'Alicia': {}, 'Bob': {}}
         household: {'parents': ['Alicia']}
@@ -304,7 +299,7 @@ def test_some_person_without_household(simulation_builder):
     assert parents_in_households.tolist() == [1, 1]  # household member default role is first_parent
 
 
-def test_nb_persons_in_group_entity(simulation_builder):
+def test_nb_persons_in_group_entity(simulation_builder, tax_benefit_system):
     persons_ids: Iterable = [2, 0, 1, 4, 3]
     households_ids: Iterable = ['c', 'a', 'b']
     persons_households: Iterable = ['c', 'a', 'a', 'b', 'a']
@@ -319,7 +314,7 @@ def test_nb_persons_in_group_entity(simulation_builder):
     assert persons_in_households.tolist() == [1, 3, 1]
 
 
-def test_nb_persons_no_role(simulation_builder):
+def test_nb_persons_no_role(simulation_builder, tax_benefit_system):
     persons_ids: Iterable = [2, 0, 1, 4, 3]
     households_ids: Iterable = ['c', 'a', 'b']
     persons_households: Iterable = ['c', 'a', 'a', 'b', 'a']
@@ -334,7 +329,7 @@ def test_nb_persons_no_role(simulation_builder):
     assert parents_in_households.tolist() == [1, 3, 1]  # household member default role is first_parent
 
 
-def test_nb_persons_by_role(simulation_builder):
+def test_nb_persons_by_role(simulation_builder, tax_benefit_system):
     persons_ids: Iterable = [2, 0, 1, 4, 3]
     households_ids: Iterable = ['c', 'a', 'b']
     persons_households: Iterable = ['c', 'a', 'a', 'b', 'a']
@@ -354,7 +349,7 @@ def test_nb_persons_by_role(simulation_builder):
     assert parents_in_households.tolist() == [0, 1, 1]
 
 
-def test_integral_roles(simulation_builder):
+def test_integral_roles(simulation_builder, tax_benefit_system):
     persons_ids: Iterable = [2, 0, 1, 4, 3]
     households_ids: Iterable = ['c', 'a', 'b']
     persons_households: Iterable = ['c', 'a', 'a', 'b', 'a']
@@ -378,7 +373,7 @@ def test_integral_roles(simulation_builder):
 # Test Intégration
 
 
-def test_from_person_variable_to_group(simulation_builder):
+def test_from_person_variable_to_group(simulation_builder, tax_benefit_system):
     persons_ids: Iterable = [2, 0, 1, 4, 3]
     households_ids: Iterable = ['c', 'a', 'b']
 
@@ -404,7 +399,7 @@ def test_from_person_variable_to_group(simulation_builder):
     assert total_taxes / simulation.calculate('rent', period) == approx(1)
 
 
-def test_simulation(simulation_builder):
+def test_simulation(simulation_builder, tax_benefit_system):
     input_yaml = """
         salary:
             2016-10: 12000
@@ -417,7 +412,7 @@ def test_simulation(simulation_builder):
     simulation.calculate("total_taxes", "2016-10")
 
 
-def test_vectorial_input(simulation_builder):
+def test_vectorial_input(simulation_builder, tax_benefit_system):
     input_yaml = """
         salary:
             2016-10: [12000, 20000]
@@ -430,13 +425,13 @@ def test_vectorial_input(simulation_builder):
     simulation.calculate("total_taxes", "2016-10")
 
 
-def test_fully_specified_entities(simulation_builder):
+def test_fully_specified_entities(simulation_builder, tax_benefit_system):
     simulation = simulation_builder.build_from_dict(tax_benefit_system, couple)
     assert simulation.household.count == 1
     assert simulation.persons.count == 2
 
 
-def test_single_entity_shortcut(simulation_builder):
+def test_single_entity_shortcut(simulation_builder, tax_benefit_system):
     input_yaml = """
         persons:
           Alicia: {}
@@ -449,7 +444,7 @@ def test_single_entity_shortcut(simulation_builder):
     assert simulation.household.count == 1
 
 
-def test_order_preserved(simulation_builder):
+def test_order_preserved(simulation_builder, tax_benefit_system):
     input_yaml = """
         persons:
           Javier: {}
@@ -467,7 +462,7 @@ def test_order_preserved(simulation_builder):
     assert simulation.persons.ids == ['Javier', 'Alicia', 'Sarah', 'Tom']
 
 
-def test_inconsistent_input(simulation_builder):
+def test_inconsistent_input(simulation_builder, tax_benefit_system):
     input_yaml = """
         salary:
             2016-10: [12000, 20000]

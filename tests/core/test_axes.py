@@ -127,8 +127,7 @@ def test_add_perpendicular_axes(simulation_builder, persons):
 # Integration test
 
 
-def test_simulation_with_axes(simulation_builder):
-    from .test_countries import tax_benefit_system
+def test_simulation_with_axes(simulation_builder, tax_benefit_system):
     input_yaml = """
         persons:
           Alicia: {salary: {2018-11: 0}}

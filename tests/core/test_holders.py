@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 import pytest
 
@@ -10,19 +8,24 @@ from openfisca_core.tools import assert_near
 from openfisca_core.memory_config import MemoryConfig
 from openfisca_core.holders import Holder, set_input_dispatch_by_period
 from openfisca_core.errors import PeriodMismatchError
-from .test_countries import tax_benefit_system
 
 from pytest import fixture
 
 
 @fixture
-def single(simulation_builder):
-    return simulation_builder.build_from_entities(tax_benefit_system, openfisca_country_template.situation_examples.single)
+def single(simulation_builder, tax_benefit_system):
+    return simulation_builder.build_from_entities(
+        tax_benefit_system,
+        openfisca_country_template.situation_examples.single,
+        )
 
 
 @fixture
-def couple(simulation_builder):
-    return simulation_builder.build_from_entities(tax_benefit_system, openfisca_country_template.situation_examples.couple)
+def couple(simulation_builder, tax_benefit_system):
+    return simulation_builder.build_from_entities(
+        tax_benefit_system,
+        openfisca_country_template.situation_examples.couple,
+        )
 
 
 period = make_period('2017-12')

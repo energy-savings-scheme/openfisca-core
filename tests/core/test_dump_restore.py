@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import shutil
 import tempfile
 
@@ -9,10 +6,8 @@ from numpy.testing import assert_array_equal
 from openfisca_country_template.situation_examples import couple
 from openfisca_core.tools.simulation_dumper import dump_simulation, restore_simulation
 
-from .test_countries import tax_benefit_system
 
-
-def test_dump(simulation_builder):
+def test_dump(simulation_builder, tax_benefit_system):
     directory = tempfile.mkdtemp(prefix = "openfisca_")
     simulation = simulation_builder.build_from_entities(tax_benefit_system, couple)
     calculated_value = simulation.calculate('disposable_income', '2018-01')
