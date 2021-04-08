@@ -4,7 +4,6 @@ import numpy as np
 import pytest
 
 import openfisca_country_template.situation_examples
-from openfisca_core.simulation_builder import SimulationBuilder
 from openfisca_country_template.variables.housing import HousingOccupancyStatus
 from openfisca_core.periods import period as make_period, ETERNITY
 from openfisca_core.tools import assert_near
@@ -17,13 +16,13 @@ from pytest import fixture
 
 
 @fixture
-def single():
-    return SimulationBuilder().build_from_entities(tax_benefit_system, openfisca_country_template.situation_examples.single)
+def single(simulation_builder):
+    return simulation_builder.build_from_entities(tax_benefit_system, openfisca_country_template.situation_examples.single)
 
 
 @fixture
-def couple():
-    return SimulationBuilder().build_from_entities(tax_benefit_system, openfisca_country_template.situation_examples.couple)
+def couple(simulation_builder):
+    return simulation_builder.build_from_entities(tax_benefit_system, openfisca_country_template.situation_examples.couple)
 
 
 period = make_period('2017-12')

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from copy import deepcopy
 
 from openfisca_core.simulation_builder import SimulationBuilder
@@ -47,7 +45,7 @@ def test_role_index_and_positions():
     assert(simulation.household.ids == ['h1', 'h2'])
 
 
-def test_entity_structure_with_constructor():
+def test_entity_structure_with_constructor(simulation_builder):
     simulation_yaml = """
         persons:
           bill: {}
@@ -68,7 +66,7 @@ def test_entity_structure_with_constructor():
             - claudia
     """
 
-    simulation = SimulationBuilder().build_from_dict(tax_benefit_system, yaml.safe_load(simulation_yaml))
+    simulation = simulation_builder.build_from_dict(tax_benefit_system, yaml.safe_load(simulation_yaml))
 
     household = simulation.household
 
@@ -77,7 +75,7 @@ def test_entity_structure_with_constructor():
     assert_near(household.members_position, [0, 1, 0, 2, 3])
 
 
-def test_entity_variables_with_constructor():
+def test_entity_variables_with_constructor(simulation_builder):
     simulation_yaml = """
         persons:
           bill: {}
@@ -102,12 +100,12 @@ def test_entity_variables_with_constructor():
               2017-06: 600
     """
 
-    simulation = SimulationBuilder().build_from_dict(tax_benefit_system, yaml.safe_load(simulation_yaml))
+    simulation = simulation_builder.build_from_dict(tax_benefit_system, yaml.safe_load(simulation_yaml))
     household = simulation.household
     assert_near(household('rent', "2017-06"), [800, 600])
 
 
-def test_person_variable_with_constructor():
+def test_person_variable_with_constructor(simulation_builder):
     simulation_yaml = """
         persons:
           bill:
@@ -135,13 +133,13 @@ def test_person_variable_with_constructor():
             - claudia
     """
 
-    simulation = SimulationBuilder().build_from_dict(tax_benefit_system, yaml.safe_load(simulation_yaml))
+    simulation = simulation_builder.build_from_dict(tax_benefit_system, yaml.safe_load(simulation_yaml))
     person = simulation.person
     assert_near(person('salary', "2017-11"), [1500, 0, 3000, 0, 0])
     assert_near(person('salary', "2017-12"), [2000, 0, 4000, 0, 0])
 
 
-def test_set_input_with_constructor():
+def test_set_input_with_constructor(simulation_builder):
     simulation_yaml = """
         persons:
           bill:
@@ -174,7 +172,7 @@ def test_set_input_with_constructor():
             - claudia
     """
 
-    simulation = SimulationBuilder().build_from_dict(tax_benefit_system, yaml.safe_load(simulation_yaml))
+    simulation = simulation_builder.build_from_dict(tax_benefit_system, yaml.safe_load(simulation_yaml))
     person = simulation.person
     assert_near(person('salary', "2017-12"), [2000, 0, 4000, 0, 0])
     assert_near(person('salary', "2017-10"), [2000, 3000, 1600, 0, 0])
@@ -364,8 +362,8 @@ def test_value_from_first_person():
     assert_near(salary_first_person, [1000, 3000])
 
 
-def test_projectors_methods():
-    simulation = SimulationBuilder().build_from_dict(tax_benefit_system, couple)
+def test_projectors_methods(simulation_builder):
+    simulation = simulation_builder.build_from_dict(tax_benefit_system, couple)
     household = simulation.household
     person = simulation.person
 
@@ -425,10 +423,10 @@ def test_sum_following_bug_ipp_2():
     assert_near(nb_eligibles_by_household, [2, 0])
 
 
-def test_get_memory_usage():
+def test_get_memory_usage(simulation_builder):
     test_case = deepcopy(single)
     test_case["persons"]["Alicia"]["salary"] = {"2017-01": 0}
-    simulation = SimulationBuilder().build_from_dict(tax_benefit_system, test_case)
+    simulation = simulation_builder.build_from_dict(tax_benefit_system, test_case)
     simulation.calculate('disposable_income', '2017-01')
     memory_usage = simulation.person.get_memory_usage(variables = ['salary'])
     assert(memory_usage['total_nb_bytes'] > 0)

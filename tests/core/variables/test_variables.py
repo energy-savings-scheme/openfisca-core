@@ -4,7 +4,6 @@ import datetime
 
 from openfisca_core.model_api import Variable
 from openfisca_core.periods import MONTH, ETERNITY
-from openfisca_core.simulation_builder import SimulationBuilder
 from openfisca_core.tools import assert_near
 
 import openfisca_country_template as country_template
@@ -23,13 +22,13 @@ tax_benefit_system = country_template.CountryTaxBenefitSystem()
 # HELPERS
 
 @fixture
-def couple():
-    return SimulationBuilder().build_from_entities(tax_benefit_system, openfisca_country_template.situation_examples.couple)
+def couple(simulation_builder):
+    return simulation_builder.build_from_entities(tax_benefit_system, openfisca_country_template.situation_examples.couple)
 
 
 @fixture
-def simulation():
-    return SimulationBuilder().build_from_entities(tax_benefit_system, openfisca_country_template.situation_examples.single)
+def simulation(simulation_builder):
+    return simulation_builder.build_from_entities(tax_benefit_system, openfisca_country_template.situation_examples.single)
 
 
 def vectorize(individu, number):

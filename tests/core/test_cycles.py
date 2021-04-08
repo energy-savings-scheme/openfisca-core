@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
-
 from openfisca_core import periods
 from openfisca_core.periods import MONTH
-from openfisca_core.simulation_builder import SimulationBuilder
 from openfisca_core.simulations import CycleError
 from openfisca_core.variables import Variable
 
@@ -19,8 +16,8 @@ def reference_period():
 
 
 @fixture
-def simulation(reference_period):
-    return SimulationBuilder().build_default_simulation(tax_benefit_system)
+def simulation(simulation_builder):
+    return simulation_builder.build_default_simulation(tax_benefit_system)
 
 
 # 1 <--> 2 with same period
