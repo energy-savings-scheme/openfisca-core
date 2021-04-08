@@ -7,10 +7,9 @@ from datetime import date
 
 from pytest import raises, fixture, approx
 
-from openfisca_core.simulation_builder import SimulationBuilder, Simulation
+from openfisca_core.simulation_builder import Simulation
 from openfisca_core.tools import assert_near
 from openfisca_core.tools.test_runner import yaml
-from openfisca_core.entities import Entity, GroupEntity
 from openfisca_core.populations import Population
 from openfisca_core.variables import Variable
 from openfisca_country_template.entities import Household
@@ -21,20 +20,6 @@ from openfisca_core.indexed_enums import Enum as OFEnum
 
 
 from .test_countries import tax_benefit_system
-
-
-class TestVariable(Variable):
-    definition_period = ETERNITY
-    value_type = float
-
-    def __init__(self, entity):
-        self.__class__.entity = entity
-        super().__init__()
-
-
-@fixture
-def simulation_builder():
-    return SimulationBuilder()
 
 
 @fixture
@@ -82,43 +67,6 @@ def enum_variable():
             pass
 
     return TestEnum()
-
-
-@fixture
-def persons():
-    class TestPersonEntity(Entity):
-        def get_variable(self, variable_name):
-            result = TestVariable(self)
-            result.name = variable_name
-            return result
-
-        def check_variable_defined_for_entity(self, variable_name):
-            return True
-
-    return TestPersonEntity("person", "persons", "", "")
-
-
-@fixture
-def group_entity():
-    class Household(GroupEntity):
-        def get_variable(self, variable_name):
-            result = TestVariable(self)
-            result.name = variable_name
-            return result
-
-        def check_variable_defined_for_entity(self, variable_name):
-            return True
-
-    roles = [{
-        'key': 'parent',
-        'plural': 'parents',
-        'max': 2
-        }, {
-        'key': 'child',
-        'plural': 'children'
-        }]
-
-    return Household("household", "households", "", "", roles)
 
 
 def test_build_default_simulation(simulation_builder):
