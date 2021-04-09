@@ -1,3 +1,5 @@
+import pytest
+
 from openfisca_core import periods
 from openfisca_core.variables import Variable
 
@@ -9,3 +11,8 @@ class TestVariable(Variable):
     def __init__(self, entity):
         self.__class__.entity = entity
         super().__init__()
+
+
+@pytest.fixture(scope = "module")
+def variable():
+    return TestVariable

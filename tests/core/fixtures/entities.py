@@ -2,12 +2,12 @@ import pytest
 
 from openfisca_core.entities import Entity, GroupEntity
 
-from . import variables
 
-
+@pytest.mark.usefixture("variable")
 class TestEntity(Entity):
-    def get_variable(self, variable_name):
-        result = variables.TestVariable(self)
+
+    def get_variable(self, variable_name, variable):
+        result = variable(self)
         result.name = variable_name
         return result
 
@@ -15,9 +15,11 @@ class TestEntity(Entity):
         return True
 
 
+@pytest.mark.usefixture("variable")
 class TestGroupEntity(GroupEntity):
-    def get_variable(self, variable_name):
-        result = variables.TestVariable(self)
+
+    def get_variable(self, variable_name, variable):
+        result = variable(self)
         result.name = variable_name
         return result
 
@@ -25,23 +27,28 @@ class TestGroupEntity(GroupEntity):
         return True
 
 
-@pytest.fixture
+@pytest.fixture(scope = "session")
 def household_roles():
-    return [{
-        "key": "parent",
-        "plural": "parents",
-        "max": 2
-        }, {
-        "key": "child",
-        "plural": "children",
-        }]
+    return [
+        {
+            "key": "parent",
+            "plural": "parents",
+            "label": "Parents",
+            "max": 2,
+            "subroles": ["first_parent", "second_parent"],
+            }, {
+            "key": "child",
+            "plural": "children",
+            "label": "Child",
+            },
+        ]
 
 
-@pytest.fixture
+@pytest.fixture(scope = "session")
 def persons():
     return TestEntity("person", "persons", "", "")
 
 
-@pytest.fixture
+@pytest.fixture(scope = "session")
 def households(household_roles):
     return TestGroupEntity("household", "households", "", "", household_roles)

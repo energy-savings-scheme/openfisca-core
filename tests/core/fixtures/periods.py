@@ -1,11 +1,11 @@
 import pytest
 
 
-@pytest.fixture
+@pytest.fixture(scope = "session")
 def year():
     return 2016
 
 
-@pytest.fixture
+@pytest.fixture(scope = "session")
 def month():
     return "2016-01"
