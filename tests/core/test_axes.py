@@ -1,13 +1,6 @@
-# -*- coding: utf-8 -*-
-from pytest import fixture, approx
+from pytest import approx
 
-from openfisca_core.simulation_builder import SimulationBuilder
 from .test_simulation_builder import *  # noqa: F401
-
-
-@fixture
-def simulation_builder():
-    return SimulationBuilder()
 
 
 def test_add_axis_on_persons(simulation_builder, persons):
@@ -134,8 +127,7 @@ def test_add_perpendicular_axes(simulation_builder, persons):
 # Integration test
 
 
-def test_simulation_with_axes(simulation_builder):
-    from .test_countries import tax_benefit_system
+def test_simulation_with_axes(simulation_builder, tax_benefit_system):
     input_yaml = """
         persons:
           Alicia: {salary: {2018-11: 0}}
