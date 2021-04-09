@@ -119,8 +119,8 @@ def test_add_person_values_with_default_period_old_syntax(simulation_builder, pe
     assert_near(simulation_builder.get_input('salary', '2018-11'), [3000, 0])
 
 
-def test_add_group_entity(simulation_builder, group_entity):
-    simulation_builder.add_group_entity('persons', ['Alicia', 'Javier', 'Sarah', 'Tom'], group_entity, {
+def test_add_group_entity(simulation_builder, households):
+    simulation_builder.add_group_entity('persons', ['Alicia', 'Javier', 'Sarah', 'Tom'], households, {
         'Household_1': {'parents': ['Alicia', 'Javier']},
         'Household_2': {'parents': ['Tom'], 'children': ['Sarah']},
         })
@@ -130,8 +130,8 @@ def test_add_group_entity(simulation_builder, group_entity):
     assert [role.key for role in simulation_builder.get_roles('households')] == ['parent', 'parent', 'child', 'parent']
 
 
-def test_add_group_entity_loose_syntax(simulation_builder, group_entity):
-    simulation_builder.add_group_entity('persons', ['Alicia', 'Javier', 'Sarah', '1'], group_entity, {
+def test_add_group_entity_loose_syntax(simulation_builder, households):
+    simulation_builder.add_group_entity('persons', ['Alicia', 'Javier', 'Sarah', '1'], households, {
         'Household_1': {'parents': ['Alicia', 'Javier']},
         'Household_2': {'parents': 1, 'children': 'Sarah'},
         })

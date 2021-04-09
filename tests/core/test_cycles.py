@@ -91,8 +91,8 @@ class cotisation(Variable):
 
 
 @pytest.fixture
-def reference_period():
-    return periods.period('2013-01')
+def reference_period(month):
+    return periods.period(month)
 
 
 @pytest.fixture(scope = "module", autouse = True)

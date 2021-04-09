@@ -2,7 +2,7 @@ import pytest
 
 from openfisca_core.entities import Entity, GroupEntity
 
-from tests.core.fixtures import variables
+from . import variables
 
 
 class TestEntity(Entity):
@@ -43,5 +43,5 @@ def persons():
 
 
 @pytest.fixture
-def group_entity(household_roles):
+def households(household_roles):
     return TestGroupEntity("household", "households", "", "", household_roles)

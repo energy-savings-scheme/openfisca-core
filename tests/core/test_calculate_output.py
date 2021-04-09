@@ -1,6 +1,6 @@
 import pytest
 
-from openfisca_country_template import entities, situation_examples
+from openfisca_country_template import entities
 
 from openfisca_core import periods, simulations, tools
 from openfisca_core.variables import Variable
@@ -36,10 +36,10 @@ def add_variables_to_tax_benefit_system(tax_benefit_system):
 
 
 @pytest.fixture
-def simulation(simulation_builder, tax_benefit_system):
+def simulation(simulation_builder, tax_benefit_system, single):
     return simulation_builder.build_from_entities(
         tax_benefit_system,
-        situation_examples.single,
+        single,
         )
 
 
