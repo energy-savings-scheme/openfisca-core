@@ -14,6 +14,8 @@ class SingleAmountTaxScale(AmountTaxScaleLike):
             tax_base: typing.Union[numpy.ndarray[int], numpy.ndarray[float]],
             right: bool = False,
             interpolate: bool = False,
+            interp_right: typing.Union[numpy.ndarray[int], numpy.ndarray[float], None] = None,
+            interp_left: typing.Union[numpy.ndarray[int], numpy.ndarray[float], None] = None,
             ) -> numpy.ndarray[float]:
         """
         Matches the input amount to a set of brackets and returns the single cell value
@@ -27,7 +29,7 @@ class SingleAmountTaxScale(AmountTaxScaleLike):
         if interpolate:
             thresholds = self.thresholds
             amounts = self.amounts
-            result = numpy.interp(tax_base, thresholds, amounts)
+            result = numpy.interp(tax_base, thresholds, amounts, left=interp_left, right=interp_right)
             return result
 
         else:
