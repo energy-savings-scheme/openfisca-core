@@ -7,7 +7,7 @@ import os
 import pkg_resources
 import traceback
 import typing
-from imp import find_module, load_module
+from importlib import find_module, load_module
 
 from openfisca_core import commons, periods, variables
 from openfisca_core.entities import Entity
