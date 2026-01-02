@@ -7,7 +7,9 @@ import os
 import pkg_resources
 import traceback
 import typing
-from importlib import find_module, load_module
+import sys
+import importlib.util
+import importlib.machinery
 
 from openfisca_core import commons, periods, variables
 from openfisca_core.entities import Entity
@@ -19,6 +21,21 @@ from openfisca_core.simulations import SimulationBuilder
 from openfisca_core.variables import Variable
 
 log = logging.getLogger(__name__)
+
+
+def load_module_from_dir(module_name: str, file_name: str, module_directory: str):
+    spec = importlib.machinery.PathFinder.find_spec(file_name, [module_directory])
+    if spec is None or spec.loader is None:
+        raise ModuleNotFoundError(f"Cannot find {file_name!r} in {module_directory!r}")
+
+    new_spec = importlib.util.spec_from_loader(module_name, spec.loader, origin=spec.origin)
+    if new_spec is None:
+        raise ImportError(f"Cannot create spec for {module_name!r}")
+
+    module = importlib.util.module_from_spec(new_spec)
+    sys.modules[module_name] = module
+    new_spec.loader.exec_module(module)
+    return module
 
 
 class TaxBenefitSystem:
@@ -192,7 +209,7 @@ class TaxBenefitSystem:
 
             module_directory = os.path.dirname(file_path)
             try:
-                module = load_module(module_name, *find_module(file_name, [module_directory]))
+                module = load_module_from_dir(module_name, file_name, module_directory)
             except NameError as e:
                 logging.error(str(e) + ": if this code used to work, this error might be due to a major change in OpenFisca-Core. Checkout the changelog to learn more: <https://github.com/openfisca/openfisca-core/blob/master/CHANGELOG.md>")
                 raise
